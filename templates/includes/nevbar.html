@@ -1,0 +1,78 @@
+{% load static %}
+<!-- ======================== ANNOUNCEMENT BAR ======================== -->
+<div class="header-announce d-none d-md-block">
+    🚀 Free shipping on orders over $50! &nbsp;|&nbsp;
+    Use code <strong>MART10</strong> for 10% off your first order. &nbsp;
+    <a href="#">Shop Now →</a>
+</div>
+
+<!-- ======================== TOP STRIP ======================== -->
+<div class="header-top-strip">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <span class="flag-icons">
+                    <img src="{% static 'images/icons/flag-in.png' %}" alt="India" title="INR">
+                    <img src="{% static 'images/icons/flag-usa.png' %}" alt="USA" title="USD">
+                    <img src="{% static 'images/icons/flag-kr.png' %}" alt="Korea" title="KRW">
+                    <img src="{% static 'images/icons/flag-tr.png' %}" alt="Turkey" title="TRY">
+                </span>
+                <span class="ms-2">Currency: <strong class="text-white">INR</strong></span>
+            </div>
+            <div>
+                <a href="#"><i class="fas fa-phone me-1"></i> +1-800-DJango</a>
+                <a href="#"><i class="fas fa-envelope me-1"></i> support@djangomart.com</a>
+                <a href="#"><i class="fas fa-map-marker-alt me-1"></i> Track Order</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ======================== HEADER MAIN ======================== -->
+<header class="header-main">
+    <div class="container">
+        <div class="row align-items-center g-3">
+
+            <!-- Logo -->
+            <div class="col-xl-2 col-lg-3 col-md-4 col-5">
+                <a href="{% url 'home' %}" class="brand-name d-flex align-items-center gap-2">
+                    <span>Django<span style="color:#3167eb">Mart</span></span>
+                </a>
+            </div>
+
+            <!-- Store Button -->
+            <div class="col-auto order-2 order-lg-2 d-flex align-items-center">
+                <a href="{% url 'store' %}" class="btn-cat btn" style="display: flex; align-items: center; justify-content: center; text-decoration: none; white-space: nowrap; height: 44px; padding: 0 1.2rem; border: 1.5px solid #3167eb; border-radius: 6px;">
+                    Store
+                </a>
+            </div>
+
+            <!-- Search -->
+            <div class="col-xl-5 col-lg-4 col-md-12 col-12 order-3 order-lg-3 search-main mt-3 mt-lg-0">
+                <form class="d-flex w-100">
+                    <input type="text" class="form-control w-100" id="searchInput" placeholder="Search products, brands and categories…" aria-label="Search">
+                    <button class="btn-search btn flex-shrink-0" type="submit" aria-label="Search">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- User / Cart widgets -->
+            <div class="col-xl-4 col-lg-4 col-md-8 col-7 order-2 order-lg-3 d-flex justify-content-end align-items-center">
+                <div class="widget-header d-flex align-items-center" style="gap: 1.5rem;">
+                    <div class="text-start">
+                        <span class="text-muted d-block" style="font-size: 0.95rem; font-weight: 500; margin-bottom: 2px;">Welcome guest!</span>
+                        <div style="font-size: 1.1rem; color: #495057;"> 
+                            <a href="#" style="text-decoration: none; color: #495057;">Sign in</a> <span style="color:#a9a9a9;">|</span>   
+                            <a href="#" style="text-decoration: none; color: #495057;">Register</a>
+                        </div>
+                    </div>
+                    <a href="#" class="position-relative" style="display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; border: 1px solid #e4e4e4; background: #fff; text-decoration: none; transition: all 0.2s ease;">
+                        <i class="fas fa-shopping-cart" style="font-size: 1.3rem; color: #8a8a8a;"></i>
+                        <span style="position: absolute; top: -5px; right: -5px; background: #fa3434; color: #fff; font-size: 0.8rem; font-weight: 700; padding: 2px 7px; border-radius: 50px; line-height: 1.2;">0</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<!-- ======================== MAIN CONTENT ======================== -->
+ 
+<!-- ======================== CATEGORY NAV ======================== -->
+<nav class="navbar-cat">
+    <div class="container">
+        <ul class="nav">
+            {%for category in categories%}
+            <li class="nav-item"><a class="nav-link" href="{{category.get_url}}"><i class="{{category.cat_icon}}"></i> {{category.cat_name}}</a></li>
+            
+            {%endfor%}
+            <li class="nav-item ms-auto"><a class="nav-link hot-deal" href="#"><i class="fas fa-fire"></i> Hot Deals</a></li> 
+        </ul>
+    </div>
+</nav>
+
+<main class="container padding-y">
+
+    <!-- ===== HERO BANNER ===== -->
+    <div class="row g-3 mb-4">
+        <div class="col-lg-9">
+            <div class="hero-banner position-relative rounded-3 overflow-hidden" id="heroBanner">
+                <img src="{% static 'images/banners/cover.jpg' %}" alt="Hero Banner" class="w-100" id="heroImg" style="height:420px; object-fit:cover;">
+                <div class="hero-overlay">
+                    <div class="hero-caption">
+                        <span class="badge-label">🔥 New Collection 2026</span>
+                        <h1>Style That <br>Speaks <br>For You</h1>
+                        <p>Discover the latest trends in fashion, footwear and accessories — all at unbeatable prices.</p>
+                        <a href="#products" class="btn-hero">Shop Now <i class="fas fa-arrow-right ms-2"></i></a>
+                    </div>
+                </div>
+                <button class="hero-prev" id="heroPrev" aria-label="Previous slide"><i class="fas fa-chevron-left"></i></button>
+                <button class="hero-next" id="heroNext" aria-label="Next slide"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+
+        <!-- Side banners -->
+        <div class="col-lg-3 d-flex flex-column gap-3">
+            <div class="card-banner-side flex-fill" style="min-height:195px;">
+                <img src="{% static 'images/banners/1.jpg' %}" alt="Summer Sale" style="object-fit:cover; width:100%; height:100%;">
+                <div class="caption">
+                    <h5>Summer<br>Sale</h5>
+                    <p>Up to 40% off</p>
+                    <a href="{{product.get_url}}" class="btn-sm">Shop <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+            <div class="card-banner-side flex-fill" style="background:#fff3e0; min-height:195px;">
+                <div class="caption" style="top:50%; transform:translateY(-50%);">
+                    <span style="font-size:.75rem; color:#ff9017; font-weight:700; text-transform:uppercase;">Clearance</span>
+                    <h5 style="color:#212529;">Last Chance<br>Deals</h5>
+                    <a href="#" class="btn-sm" style="background:#ff9017;">View All <i class="fas fa-arrow-right ms-1"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FEATURE BOXES ===== -->
+    <div class="row row-cols-2 row-cols-md-4 g-3 mb-2">
+        <div class="col">
+            <div class="feature-box">
+                <div class="icon-wrap"><i class="fas fa-shipping-fast"></i></div>
+                <div>
+                    <div class="title">Free Delivery</div>
+                    <small>On orders over $50</small>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="feature-box">
+                <div class="icon-wrap"><i class="fas fa-undo-alt"></i></div>
+                <div>
+                    <div class="title">Easy Returns</div>
+                    <small>7-day return policy</small>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="feature-box">
+                <div class="icon-wrap"><i class="fas fa-lock"></i></div>
+                <div>
+                    <div class="title">Secure Payment</div>
+                    <small>100% protected checkout</small>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="feature-box">
+                <div class="icon-wrap"><i class="fas fa-headset"></i></div>
+                <div>
+                    <div class="title">24/7 Support</div>
+                    <small>Always here to help</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SHOP BY CATEGORY ===== -->
+    <div class="section-heading">
+        <h2>Shop by <span>Category</span></h2>
+        <a href="#">View all categories <i class="fas fa-chevron-right ms-1" style="font-size:.75rem;"></i></a>
+    </div>
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-3 mb-2">
+         {%for category in categories|slice:":6" %}
+
+        <div class="col">
+            <a href="{{category.get_url}}" class="card-category">
+                <img src="{{category.cat_image.url}}" alt="Jeans">
+                <div class="cat-caption"><h6>{{category.cat_name}}</h6><small>48 items</small></div>
+            </a>
+        </div>
+        {%endfor%}
+        {%if categories.count > 6 %}
+        <div class="col">
+            <a href="{{category.get_url}}" class="card-category" style="background:#f8f0ff;">
+                <div class="cat-caption" style="position:relative; z-index:2; padding:30px 14px;">
+                    <h6 style="color:#fff;">More →</h6>
+                    <small style="color:rgba(255,255,255,.8);">All categories</small>
+                </div>
+            </a>
+        </div>
+        {%endif%}
+    </div>
+
+    <!-- ===== POPULAR PRODUCTS ===== -->
+    <div id="products">
+        <div class="section-heading">
+            <h2>Popular <span>Products</span></h2>
+            <a href="{% url 'store' %}">See all <i class="fas fa-chevron-right ms-1" style="font-size:.75rem;"></i></a>
+        </div>
+        <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
+            {%for product in products|dictsortreversed:"stock"|slice:":6" %}
+
+            <div class="col">
+                <div class="card-product-grid">
+                    <div class="img-wrap">
+                        <span class="badge-sale">-20%</span>
+                        <button class="wishlist-btn" aria-label="Add to Wishlist"><i class="far fa-heart"></i></button>
+                        <a href="{{product.get_url}}"><img src="{{product.image.url}}" alt="{{product.product_name}}"></a>
+                    </div>
+                    <div class="info-wrap">
+                        <div class="product-brand">{{product.category.cat_name}}</div>
+                        <a href="{{product.get_url}}"><div class="product-title">{{product.product_name}}</div></a>
+                        <div class="stars-wrap">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                            <span>(128)</span>
+                        </div>
+                        <div class="price-wrap">
+                            <span class="price">₹{{product.price}}</span>
+                            <span class="price-old">₹{% widthratio product.price 80 100 %}</span>
+                        </div>
+                    </div>
+                    <a href="#" class="btn-cart"><i class="fas fa-cart-plus me-1"></i> Add to Cart</a>
+                </div>
+            </div>
+            {%endfor%}
+
+        </div><!-- row end -->
+    </div>
+
+    <!-- ===== NEW ARRIVALS ===== -->
+    <div class="section-heading">
+        <h2>New <span>Arrivals</span></h2>
+        <a href="{% url 'store' %}">See all <i class="fas fa-chevron-right ms-1" style="font-size:.75rem;"></i></a>
+    </div>
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3">
+
+        {%for new_product in products|dictsortreversed:"created_date"|slice:":6" %}
+        <div class="col">
+            <div class="card-product-grid">
+                <div class="img-wrap">
+                    <span class="badge-sale" style="background:#00b517;">New</span>
+                    <button class="wishlist-btn" aria-label="Add to Wishlist"><i class="far fa-heart"></i></button>
+                    <a href="{{new_product.get_url}}"> <img src="{{new_product.image.url}}" alt="{{new_product.product_name}}"></a>
+                </div>
+                <div class="info-wrap">
+                    <div class="product-brand">{{new_product.category.cat_name}}</div>
+                    <a href="{{new_product.get_url}}"><div class="product-title">{{new_product.product_name}}</div></a>
+                    <div class="stars-wrap">
+                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                        <span>(44)</span>
+                    </div>
+                    <div class="price-wrap"><span class="price">₹{{new_product.price}}</span></div>
+                </div>
+                <a href="#" class="btn-cart"><i class="fas fa-cart-plus me-1"></i> Add to Cart</a>
+            </div>
+        </div>
+        {%endfor%}
+
+</main>
+
+<!-- ======================== SCRIPTS ======================== -->
+<script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/script.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // ---- Hero Carousel ----
+    const heroImages = [
+        "{% static 'images/banners/cover.jpg' %}",
+        "{% static 'images/banners/1.jpg' %}"
+    ];
+    let currentSlide = 0;
+    const heroImg = document.getElementById('heroImg');
+
+    function setSlide(idx) {
+        currentSlide = (idx + heroImages.length) % heroImages.length;
+        heroImg.style.opacity = 0;
+        setTimeout(() => {
+            heroImg.src = heroImages[currentSlide];
+            heroImg.style.opacity = 1;
+        }, 200);
+    }
+    heroImg.style.transition = 'opacity .3s';
+    document.getElementById('heroPrev').addEventListener('click', () => setSlide(currentSlide - 1));
+    document.getElementById('heroNext').addEventListener('click', () => setSlide(currentSlide + 1));
+    setInterval(() => setSlide(currentSlide + 1), 5000);
+
+    // ---- Wishlist toggle ----
+    document.querySelectorAll('.wishlist-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const icon = this.querySelector('i');
+            icon.classList.toggle('far');
+            icon.classList.toggle('fas');
+            this.style.color = icon.classList.contains('fas') ? '#fa3434' : '';
+        });
+    });
+
+    // ---- Add to cart badge ----
+    let cartCount = 0;
+    document.querySelectorAll('.btn-cart').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            cartCount++;
+            document.querySelectorAll('.badge-notify').forEach(badge => {
+                badge.textContent = cartCount;
+            });
+            this.textContent = '✓ Added!';
+            this.style.background = '#00b517';
+            const el = this;
+            setTimeout(() => {
+                el.innerHTML = '<i class="fas fa-cart-plus me-1"></i> Add to Cart';
+                el.style.background = '';
+            }, 1200);
+        });
+    });
+    document.addEventListener("DOMContentLoaded", function() {
+        // Select the dropdown button and all the items within the menu
+        const categoryBtn = document.getElementById("categoryDropdown");
+        const dropdownItems = document.querySelectorAll(".dropdown-menu .dropdown-item");
+
+        // Loop through each item and attach a click listener
+        dropdownItems.forEach(function(item) {
+            item.addEventListener("click", function(event) {
+                event.preventDefault(); // Stop the link from jumping the page
+                
+                // Update the button text with the clicked item's text
+                categoryBtn.textContent = this.textContent;
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
+{% endblock %}
