@@ -1,9 +1,136 @@
-{%if product.stock > 0%}
-<button class="btn btn-add w-100 py-2">
-    <i class="fas fa-cart-plus me-1"></i> Add to cart
+{% if product.slug in cart_items %}
+<button type="button" class="btn atc-btn-added w-100 py-2 fw-semibold atc-btn" disabled aria-disabled="true" data-slug="{{ product.slug }}">
+    <i class="bi bi-cart-check me-2" aria-hidden="true"></i> Added to Cart
 </button>
-{%else%}
-<div class="btn w-100 py-2 disabled">
-    <i class="fas fa-cart-plus me-1 text-danger"></i><b> Out of stock</b>
+{% elif product.stock > 0 %}
+<button type="button"
+        class="btn btn-primary w-100 py-2 fw-semibold shadow-sm atc-btn"
+        data-slug="{{ product.slug }}"
+        data-ajax-url="{% url 'add_cart_ajax' %}"
+        aria-label="Add {{ product.product_name }} to cart">
+    <i class="bi bi-cart-plus me-2" aria-hidden="true"></i> Add to Cart
+</button>
+{% else %}
+<button type="button" class="btn btn-secondary w-100 py-2 fw-semibold" disabled aria-disabled="true">
+    <i class="bi bi-x-circle me-2 text-danger" aria-hidden="true"></i> <span class="text-danger">Out of Stock</span>
+</button>
+{% endif %}
+
+<!-- ===== Toast Notification (rendered once per page by the first include) ===== -->
+{% if not atc_toast_rendered %}
+{% with atc_toast_rendered=True %}
+<!-- Toast Container -->
+<div id="atc-toast-container" aria-live="polite" aria-atomic="true"
+     style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.6rem;pointer-events:none;">
 </div>
-{%endif%}
+
+<style>
+  .atc-toast {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    background: #1a1a2e;
+    color: #fff;
+    padding: .85rem 1.2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.28);
+    font-size: .92rem;
+    font-weight: 500;
+    min-width: 240px;
+    max-width: 340px;
+    pointer-events: auto;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity .3s ease, transform .3s ease;
+  }
+  .atc-toast.show { opacity: 1; transform: translateY(0); }
+  .atc-toast.hide { opacity: 0; transform: translateY(8px); }
+  .atc-toast .atc-icon {
+    width: 34px; height: 34px;
+    background: #039d55ff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 1rem;
+  }
+  .atc-toast.error .atc-icon { background: #dc3545; }
+  .atc-btn.loading { opacity: .7; pointer-events: none; }
+</style>
+
+<script>
+(function() {
+    function showToast(msg, isError) {
+        var container = document.getElementById('atc-toast-container');
+        var toast = document.createElement('div');
+        toast.className = 'atc-toast' + (isError ? ' error' : '');
+        toast.innerHTML = '<div class="atc-icon"><i class="bi ' + (isError ? 'bi-exclamation-lg' : 'bi-check-lg') + '"></i></div><span>' + msg + '</span>';
+        container.appendChild(toast);
+        // Trigger animation
+        requestAnimationFrame(function() {
+            requestAnimationFrame(function() { toast.classList.add('show'); });
+        });
+        setTimeout(function() {
+            toast.classList.remove('show');
+            toast.classList.add('hide');
+            setTimeout(function() { toast.remove(); }, 350);
+        }, 3000);
+    }
+
+    function getCookie(name) {
+        var val = null;
+        document.cookie.split(';').forEach(function(c) {
+            c = c.trim();
+            if (c.startsWith(name + '=')) val = decodeURIComponent(c.slice(name.length + 1));
+        });
+        return val;
+    }
+
+    document.addEventListener('click', function(e) {
+        var btn = e.target.closest('.atc-btn[data-ajax-url]');
+        if (!btn) return;
+
+        // Prevent double-clicks
+        if (btn.classList.contains('loading')) return;
+        btn.classList.add('loading');
+
+        var slug = btn.dataset.slug;
+        var url  = btn.dataset.ajaxUrl;
+
+        var formData = new FormData();
+        formData.append('slug', slug);
+        formData.append('csrfmiddlewaretoken', getCookie('csrftoken'));
+
+        fetch(url, { method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(function(r) {
+                if (!r.ok) throw new Error('Server error: ' + r.status);
+                return r.json();
+            })
+            .then(function(data) {
+                if (data.success) {
+                    // Update cart badge(s) in navbar (cart_count = unique items, matches {{cart_items|length}})
+                    document.querySelectorAll('[data-cart-badge]').forEach(function(el) {
+                        el.textContent = data.cart_count;
+                    });
+                    showToast(data.message, false);
+
+                    // Transition button to "Added" state — matches the server-rendered disabled state
+                    btn.removeAttribute('data-ajax-url');
+                    btn.disabled = true;
+                    btn.setAttribute('aria-disabled', 'true');
+                    btn.classList.remove('btn-primary', 'loading');
+                    btn.classList.add('atc-btn-added');
+                    btn.innerHTML = '<i class="bi bi-cart-check me-2" aria-hidden="true"></i> Added to Cart';
+                } else {
+                    showToast('Could not add item. Try again.', true);
+                    btn.classList.remove('loading');
+                }
+            })
+            .catch(function(err) {
+                showToast('Network error. Please try again.', true);
+                btn.classList.remove('loading');
+            });
+    });
+})();
+</script>
+{% endwith %}
+{% endif %}

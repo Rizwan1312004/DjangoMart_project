@@ -1,0 +1,22 @@
+<div class="d-flex align-items-center mb-3">
+    {% if avgRating %}
+        <div class="text-warning mb-2 fs-6">
+            {% with ''|center:5 as range %}
+                {% for _ in range %}
+                    {% if avgRating.rating__avg >= forloop.counter %}
+                        <i class="fas fa-star"></i>
+                    {% elif avgRating.rating__avg > forloop.counter0 %}
+                        <i class="fas fa-star-half-alt"></i>
+                    {% else %}
+                        <i class="fas fa-star star-rating-empty"></i> 
+                    {% endif %}
+                {% endfor %}
+            {% endwith %}
+        </div>
+    {% endif %}
+    
+    <span class="text-muted fw-semibold">
+        {{ avgRating.rating__avg|floatformat:1 }} / 5 &nbsp;&bull;&nbsp; 
+        <a href="#reviews" class="text-decoration-none">{{ reviews|length }} Reviews</a>
+    </span>
+</div>

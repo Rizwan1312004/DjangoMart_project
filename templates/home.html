@@ -151,7 +151,7 @@
                             <span class="price-old">₹{% widthratio product.price 80 100 %}</span>
                         </div>
                     </div>
-                    <a href="#" class="btn-cart"><i class="fas fa-cart-plus me-1"></i> Add to Cart</a>
+
                 </div>
             </div>
             {%endfor%}
@@ -183,7 +183,7 @@
                     </div>
                     <div class="price-wrap"><span class="price">₹{{new_product.price}}</span></div>
                 </div>
-                <a href="#" class="btn-cart"><i class="fas fa-cart-plus me-1"></i> Add to Cart</a>
+
             </div>
         </div>
         {%endfor%}
@@ -229,39 +229,19 @@
         });
     });
 
-    // ---- Add to cart badge ----
-    let cartCount = 0;
-    document.querySelectorAll('.btn-cart').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            cartCount++;
-            document.querySelectorAll('.badge-notify').forEach(badge => {
-                badge.textContent = cartCount;
-            });
-            this.textContent = '✓ Added!';
-            this.style.background = '#00b517';
-            const el = this;
-            setTimeout(() => {
-                el.innerHTML = '<i class="fas fa-cart-plus me-1"></i> Add to Cart';
-                el.style.background = '';
-            }, 1200);
-        });
-    });
+
     document.addEventListener("DOMContentLoaded", function() {
-        // Select the dropdown button and all the items within the menu
         const categoryBtn = document.getElementById("categoryDropdown");
         const dropdownItems = document.querySelectorAll(".dropdown-menu .dropdown-item");
 
-        // Loop through each item and attach a click listener
         dropdownItems.forEach(function(item) {
             item.addEventListener("click", function(event) {
-                event.preventDefault(); // Stop the link from jumping the page
-                
-                // Update the button text with the clicked item's text
+                event.preventDefault(); 
                 categoryBtn.textContent = this.textContent;
             });
         });
     });
+    
 </script>
 
 </body>

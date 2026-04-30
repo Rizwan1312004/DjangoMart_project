@@ -74,6 +74,11 @@
         color: #fff;
     }
 
+    /* Product Items */
+    .product-item {
+        margin-top: 1rem;
+    }
+
     /* Product Cards */
     .product-card {
         border: 1px solid #eef0f2;
@@ -218,6 +223,127 @@
     }
 </style>
 
+<script>
+   document.addEventListener("DOMContentLoaded", () => {
+    let currentViewed = 6;
+    const totalProducts = {{ product_count|default:"0" }}; // Default to 0 to prevent JS errors if empty
+    const itemsPerPage = 6;
+
+    const viewedCountEl = document.getElementById('viewed-count');
+    const totalCountEl = document.getElementById('total-count');
+    const progressBarEl = document.getElementById('load-more-progress');
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    const productItems = document.querySelectorAll('.product-item'); // Grab all product elements
+
+    // Ensure initial text and progress bar width is accurate on page load
+    if (totalCountEl) totalCountEl.textContent = totalProducts;
+    if (progressBarEl) {
+        let initialPercentage = (currentViewed / totalProducts) * 100;
+        progressBarEl.style.width = `${Math.min(initialPercentage, 100)}%`;
+    }
+
+    // Hide the load more button immediately if we have 6 or fewer products
+    if (currentViewed >= totalProducts && loadMoreBtn) {
+        loadMoreBtn.style.display = 'none';
+    }
+
+    if (loadMoreBtn) {
+        loadMoreBtn.addEventListener('click', () => {
+            // Show a quick loading state for UX
+            const originalBtnHTML = loadMoreBtn.innerHTML;
+            loadMoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+            loadMoreBtn.disabled = true;
+
+            // Wait 400ms to mimic a fast database call, then reveal products
+            setTimeout(() => {
+                const nextLimit = currentViewed + itemsPerPage;
+
+                // Unhide the next batch of items
+                for (let i = currentViewed; i < nextLimit && i < productItems.length; i++) {
+                    productItems[i].style.display = 'block'; 
+                }
+
+                // Update state
+                currentViewed += itemsPerPage;
+                if (currentViewed > totalProducts) {
+                    currentViewed = totalProducts;
+                }
+
+                // Update DOM text and bar
+                viewedCountEl.textContent = currentViewed;
+                const percentage = (currentViewed / totalProducts) * 100;
+                progressBarEl.style.width = `${percentage}%`;
+
+                // If all items are shown, hide the button. Otherwise, reset it.
+                if (currentViewed >= totalProducts) {
+                    loadMoreBtn.style.display = 'none';
+                } else {
+                    loadMoreBtn.innerHTML = originalBtnHTML;
+                    loadMoreBtn.disabled = false;
+                }
+            }, 400); 
+        });
+    }
+});
+</script>
+{% if not products %}
+    <div class="container mt-5 d-flex justify-content-center"> <span class="text-muted">No Products Found For <strong style="color: #0d6efd;">"{{search_query}}"</strong></span></div>
+{% elif search_query %}
+    <main class="col-12 col-md-12 col-lg-12">
+        <div class="container mt-5 d-flex justify-content-center"> <span class="text-muted">Search For <strong style="color: #0d6efd;">"{{search_query}}"</strong></span></div>
+        <div class="row g-4 mb-5" id="product-grid">
+            {% for product in products %}
+            <div class="col-12 col-sm-6 col-lg-4 product-item" >
+                <div class="product-card h-100 d-flex flex-column">
+                    <div class="img-placeholder">
+                                    <span class="badge-sale">SALE -35%</span>
+                                    {% if product.image %}
+                                    <a href="{{product.get_url}}"><img src="{{product.image.url}}" alt="{{product.product_name}}"></a>
+                                    {% else %}
+                                    <i class="far fa-image text-muted fs-1"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="card-body p-4 d-flex flex-column flex-grow-1">
+                                    <a href="{{product.get_url}}" class="product-title mb-1">{{product.product_name}}</a>
+                                    <div class="d-flex align-items-center mb-3">
+                                        {% if product.avg_rating > 0 %}
+                                        <div class="text-warning mb-2 fs-6">
+                                            {% with ''|center:5 as range %}
+                                            {% for _ in range %}
+                                            {% if product.avg_rating >= forloop.counter %}
+                                                <i class="fas fa-star"></i>
+                                            {% elif product.avg_rating > forloop.counter0 %}
+                                                <i class="fas fa-star-half-alt"></i>
+                                            {% else %}
+                                                <i class="far fa-star"></i>
+                                            {% endif %}
+                                            {% endfor %}
+                                            {% endwith %}
+                                        </div>
+                                        {% else %}
+                                            <span class="text-muted">No reviews yet</span>
+                                        {% endif %}
+                                        {% if product.avg_rating > 0 %}
+                                            <span class="text-muted fw-semibold">
+                                                ({{ product.avg_rating|floatformat:1 }}) 
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="mt-auto mb-3">
+                                        <span class="fw-bold text-dark fs-5">₹{{product.price}}</span>
+                                        <span class="text-muted ms-2 small" style="text-decoration: line-through;">₹{% widthratio product.price 65 100 %}</span>
+                                    </div>
+                                    {% include 'includes/add_to_cart.html' %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+{% else %}
 <div class="store-wrapper py-5">
     <div class="container-xl px-3 px-lg-4">
         <div class="row">
@@ -244,31 +370,16 @@
 
                     <div class="sidebar-card">
                         <div class="sidebar-header">
-                            <span>Sizes</span>
-                        </div>
-                        <div class="sidebar-body">
-                            <div class="d-flex gap-2 flex-wrap">
-                                <button class="size-btn">XS</button>
-                                <button class="size-btn">SM</button>
-                                <button class="size-btn">MD</button>
-                                <button class="size-btn">LG</button>
-                                <button class="size-btn">XL</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="sidebar-card">
-                        <div class="sidebar-header">
                             <span>Price Range</span>
                         </div>
                         <div class="sidebar-body">
                             <div class="row g-2 mb-3">
                                 <div class="col-6">
-                                    <label class="form-label text-muted small mb-1">Min ($)</label>
+                                    <label class="form-label text-muted small mb-1">Min (₹)</label>
                                     <input type="number" class="form-control form-control-sm" placeholder="0" value="0">
                                 </div>
                                 <div class="col-6">
-                                    <label class="form-label text-muted small mb-1">Max ($)</label>
+                                    <label class="form-label text-muted small mb-1">Max (₹)</label>
                                     <input type="number" class="form-control form-control-sm" placeholder="1000" value="100">
                                 </div>
                             </div>
@@ -283,59 +394,80 @@
                 
                 <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
                     <span class="text-muted">Showing <strong>1-6</strong> of <strong>{{product_count}}</strong> items</span>
-                    <select class="form-select form-select-sm w-auto cursor-pointer">
-                        <option value="newest">Sort by: Newest</option>
-                        <option value="price-asc">Price: Low to High</option>
-                        <option value="price-desc">Price: High to Low</option>
-                        <option value="popular">Most Popular</option>
-                    </select>
+                  <select class="form-select form-select-sm w-auto cursor-pointer" onchange="window.location.href = '?sort=' + this.value;">
+                    <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Sort by: Newest</option>
+                    <option value="low-to-high" {% if sort == 'low-to-high' %}selected{% endif %}>Price: Low to High</option>
+                    <option value="high-to-low" {% if sort == 'high-to-low' %}selected{% endif %}>Price: High to Low</option>
+                    <option value="popular" {% if sort == 'popular' %}selected{% endif %}>Most Popular</option>
+                </select>
                 </div>
-
-                <div class="row g-4 mb-5">
-                    {%for product in products|dictsortreversed:"created_date"|slice:":6" %}
-                    <div class="col-12 col-sm-6 col-lg-4">
-                        <div class="product-card h-100 d-flex flex-column">
-                            <div class="img-placeholder">
-                                <span class="badge-sale">SALE -35%</span>
-                                {% if product.image %}
-                                <a href="{{product.get_url}}"><img src="{{product.image.url}}" alt="{{product.product_name}}"></a>
-                                {% else %}
-                                <i class="far fa-image text-muted fs-1"></i>
-                                {% endif %}
-                            </div>
-                            <div class="card-body p-4 d-flex flex-column flex-grow-1">
-                                <a href="{{product.get_url}}" class="product-title mb-1">{{product.product_name}}</a>
-                                <div class="rating-stars mb-2">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half-alt"></i>
-                                    <span class="text-muted small ms-1">({{product.stock}})</span>
+                    <div class="row g-4 mb-5" id="product-grid">
+                        {% for product in products %}
+                        <div class="col-12 col-sm-6 col-lg-4 product-item" {% if forloop.counter > 6 %}style="display: none;"{% endif %}>
+                            <div class="product-card h-100 d-flex flex-column">
+                                <div class="img-placeholder">
+                                    <span class="badge-sale">SALE -35%</span>
+                                    {% if product.image %}
+                                    <a href="{{product.get_url}}"><img src="{{product.image.url}}" alt="{{product.product_name}}"></a>
+                                    {% else %}
+                                    <i class="far fa-image text-muted fs-1"></i>
+                                    {% endif %}
                                 </div>
-                                <div class="mt-auto mb-3">
-                                    <span class="fw-bold text-dark fs-5">₹{{product.price}}</span>
-                                    <span class="text-muted ms-2 small" style="text-decoration: line-through;">₹{% widthratio product.price 65 100 %}</span>
+                                <div class="card-body p-4 d-flex flex-column flex-grow-1">
+                                    <a href="{{product.get_url}}" class="product-title mb-1">{{product.product_name}}</a>
+                                    <div class="d-flex align-items-center mb-3">
+                                        {% if product.avg_rating > 0 %}
+                                        <div class="text-warning mb-2 fs-6">
+                                            {% with ''|center:5 as range %}
+                                            {% for _ in range %}
+                                            {% if product.avg_rating >= forloop.counter %}
+                                                <i class="fas fa-star"></i>
+                                            {% elif product.avg_rating > forloop.counter0 %}
+                                                <i class="fas fa-star-half-alt"></i>
+                                            {% else %}
+                                                <i class="far fa-star"></i>
+                                            {% endif %}
+                                            {% endfor %}
+                                            {% endwith %}
+                                        </div>
+                                        {% else %}
+                                            <span class="text-muted">No reviews yet</span>
+                                        {% endif %}
+                                        {% if product.avg_rating > 0 %}
+                                            <span class="text-muted fw-semibold">
+                                                ({{ product.avg_rating|floatformat:1 }}) 
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="mt-auto mb-3">
+                                        <span class="fw-bold text-dark fs-5">₹{{product.price}}</span>
+                                        <span class="text-muted ms-2 small" style="text-decoration: line-through;">₹{% widthratio product.price 65 100 %}</span>
+                                    </div>
+                                    {% include 'includes/add_to_cart.html' %}
                                 </div>
-                               {%include 'includes/add_to_cart.html' %}
                             </div>
                         </div>
+                        {% endfor %}
                     </div>
-                    {%endfor%}
-                </div>
 
                 <div class="load-more-section text-center mt-2 mb-4">
-                    <p class="text-muted load-more-count mb-2">You've viewed 6 of {{product_count}} products</p>
-                    <div class="load-more-bar mb-4">
-                        <div class="load-more-bar-fill" style="width: 18%;"></div>
-                    </div>
-                    <button class="btn btn-load-more">
+                     <p class="text-muted load-more-count mb-2">
+                       You've viewed <span id="viewed-count">{% if product_count < 6 %}{{product_count}}{% else %}6{% endif %}</span> of <span id="total-count">{{product_count}}</span> products
+                     </p>
+    
+                       <div class="load-more-bar mb-4">
+                         <div id="load-more-progress" class="load-more-bar-fill" style="width: 18%;"></div>
+                       </div>
+    
+                        <button id="load-more-btn" class="btn btn-load-more">
                         <i class="fas fa-sync-alt"></i> Load More
-                    </button>
+                        </button>
                 </div>
 
             </main>
         </div>
     </div>
 </div>
+{% endif %}
+
 {% endblock %}

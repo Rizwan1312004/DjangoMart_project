@@ -2,20 +2,20 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 class MyAccountManager(BaseUserManager):
-    def create_user(self, first_name, last_name, username, email, password = None):
-       if not email:
-        raise ValueError('email is required')
-       if not username:
-        raise ValueError('username is required')
-       user = self.model(
-            email = self.normalize_email(email),
-            first_name = first_name,
-            last_name = last_name,
-            username = username,
+    def create_user(self, first_name, last_name, username, email, password=None):
+        if not email:
+            raise ValueError('Email is required')
+        if not username:
+            raise ValueError('Username is required')
+        user = self.model(
+            email=self.normalize_email(email),
+            first_name=first_name,
+            last_name=last_name,
+            username=username,
         )
-       user.set_password(password)
-       user.save(using=self._db)
-       return user
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
     def create_superuser(self, first_name, last_name, username, email, password):
         user = self.create_user(
@@ -39,7 +39,7 @@ class Account(AbstractBaseUser):
     last_name = models.CharField(max_length=50)
     username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(max_length=100, unique=True)
-    phone_number = models.CharField(max_length=15, unique=True)
+
 
     #required
     date_joined = models.DateField(auto_now_add=True)

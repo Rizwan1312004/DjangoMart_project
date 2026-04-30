@@ -1,0 +1,354 @@
+{% load static %}
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create your DjangoMart account and start shopping the latest fashion, footwear, and accessories.">
+    <title>Create Account – DjangoMart</title>
+    <link rel="icon" href="{% static 'images/favicon.ico' %}">
+
+    <!-- Local Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+
+    <!-- Font Awesome (local) -->
+    <link rel="stylesheet" href="{% static 'fonts/fontawesome/css/all.min.css' %}">
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f1623 0%, #1a2340 50%, #1e2d50 100%);
+            display: flex;
+            flex-direction: column;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        /* ---- Top bar ---- */
+        .auth-topbar {
+            background: rgba(255,255,255,0.04);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding: 14px 0;
+        }
+        .auth-topbar .brand-name {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+        .auth-topbar .brand-name span { color: #3167eb; }
+        .auth-topbar .back-link {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .auth-topbar .back-link:hover { color: #fff; }
+        .auth-topbar .back-link i { margin-right: 4px; }
+
+        /* ---- Main content ---- */
+        .auth-main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 16px;
+        }
+
+        /* ---- Decorative circles ---- */
+        .auth-bg-circle {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .circle-1 {
+            width: 400px; height: 400px;
+            background: rgba(49,103,235,0.25);
+            top: -100px; right: -100px;
+        }
+        .circle-2 {
+            width: 300px; height: 300px;
+            background: rgba(255,144,23,0.15);
+            bottom: -80px; left: -80px;
+        }
+
+        /* ---- Auth card ---- */
+        .auth-card {
+            position: relative;
+            z-index: 1;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 32px 80px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.06);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
+        }
+
+        /* ---- Card header accent ---- */
+        .auth-card-header {
+            background: linear-gradient(135deg, #1a2340 0%, #253560 100%);
+            padding: 28px 40px 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .auth-card-header::before {
+            content: '';
+            position: absolute;
+            top: -40px; right: -40px;
+            width: 140px; height: 140px;
+            background: rgba(49,103,235,0.3);
+            border-radius: 50%;
+        }
+        .auth-card-header::after {
+            content: '';
+            position: absolute;
+            bottom: -30px; left: -30px;
+            width: 100px; height: 100px;
+            background: rgba(255,144,23,0.2);
+            border-radius: 50%;
+        }
+        .auth-card-header .store-icon {
+            position: relative;
+            z-index: 1;
+            width: 56px; height: 56px;
+            background: linear-gradient(135deg, #3167eb, #1a4bcc);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 14px;
+            box-shadow: 0 4px 16px rgba(49,103,235,0.4);
+        }
+        .auth-card-header .store-icon i {
+            color: #fff;
+            font-size: 1.4rem;
+        }
+        .auth-card-header h1 {
+            position: relative;
+            z-index: 1;
+            color: #fff;
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin: 0 0 6px;
+        }
+        .auth-card-header p {
+            position: relative;
+            z-index: 1;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.87rem;
+            margin: 0;
+        }
+
+        /* ---- Step badges ---- */
+        .auth-benefits {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            padding: 12px 40px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .auth-benefit {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.75rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+        .auth-benefit i { color: #3167eb; font-size: 0.8rem; }
+
+        /* ---- Card body ---- */
+        .auth-card-body {
+            padding: 32px 40px 30px;
+        }
+
+        /* ---- Form labels & inputs ---- */
+        .auth-card-body label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .auth-card-body .form-control {
+            border: 1.5px solid #dee2e6;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.92rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .auth-card-body .form-control:focus {
+            border-color: #3167eb;
+            box-shadow: 0 0 0 3px rgba(49,103,235,0.15);
+            outline: none;
+        }
+
+        /* ---- Primary button ---- */
+        .btn-auth-primary {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #ff9017 0%, #e67c00 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            margin-top: 8px;
+        }
+        .btn-auth-primary:hover {
+            background: linear-gradient(135deg, #e67c00 0%, #c96800 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(255,144,23,0.4);
+        }
+        .btn-auth-primary i { margin-right: 6px; }
+
+        /* ---- Divider ---- */
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 22px 0;
+            color: #adb5bd;
+            font-size: 0.82rem;
+        }
+        .auth-divider::before, .auth-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e9ecef;
+        }
+
+        /* ---- Footer link ---- */
+        .auth-footer-text {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin: 0;
+        }
+        .auth-footer-text a {
+            color: #3167eb;
+            font-weight: 700;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .auth-footer-text a:hover { color: #1a4bcc; text-decoration: underline; }
+
+        /* ---- Terms note ---- */
+        .terms-note {
+            font-size: 0.75rem;
+            color: #adb5bd;
+            text-align: center;
+            margin-top: 12px;
+            line-height: 1.5;
+        }
+        .terms-note a { color: #3167eb; text-decoration: none; }
+        .terms-note a:hover { text-decoration: underline; }
+
+        /* ---- Error messages ---- */
+        .errorlist {
+            list-style: none;
+            padding: 0;
+            margin: 4px 0 0;
+        }
+        .errorlist li {
+            color: #dc3545;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 480px) {
+            .auth-card-header { padding: 22px 24px 18px; }
+            .auth-card-body { padding: 24px 24px 22px; }
+            .auth-benefits { padding: 10px 16px; gap: 10px; flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Decorative background circles -->
+<div class="auth-bg-circle circle-1"></div>
+<div class="auth-bg-circle circle-2"></div>
+
+<!-- Top bar -->
+<div class="auth-topbar">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <a href="{% url 'home' %}" class="brand-name">Django<span>Mart</span></a>
+            <a href="{% url 'home' %}" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Store
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Main -->
+<main class="auth-main">
+    <div class="auth-card">
+
+        <!-- Card Header -->
+        <div class="auth-card-header">
+            <div class="store-icon">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <h1>Create Your Account</h1>
+            <p>Join thousands of happy DjangoMart shoppers</p>
+        </div>
+
+        <!-- Benefits strip -->
+        <div class="auth-benefits">
+            <span class="auth-benefit"><i class="fas fa-tag"></i> Exclusive Deals</span>
+            <span class="auth-benefit"><i class="fas fa-truck"></i> Fast Delivery</span>
+            <span class="auth-benefit"><i class="fas fa-undo"></i> Easy Returns</span>
+        </div>
+
+        <!-- Card Body -->
+        <div class="auth-card-body">
+
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show mb-3" role="alert" style="font-size:0.85rem; border-radius: 8px;">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+            <form method="POST" action="{% url 'register_user' %}" id="registerForm">
+                {% csrf_token %}
+                {{ form|crispy }}
+
+                <button class="btn-auth-primary" type="submit" id="registerBtn">
+                    <i class="fas fa-user-plus"></i> Create Account
+                </button>
+            </form>
+
+            <p class="terms-note">
+                By creating an account, you agree to our
+                <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+            </p>
+
+            <div class="auth-divider">already a member?</div>
+
+            <p class="auth-footer-text">
+                <a href="{% url 'login_user' %}"><i class="fas fa-sign-in-alt me-1"></i>Sign in to your account</a>
+            </p>
+
+        </div>
+    </div>
+</main>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

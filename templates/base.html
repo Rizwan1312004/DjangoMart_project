@@ -473,4 +473,24 @@
 {% block content %}
 
 {% endblock %}
+
+{# ---- Django flash messages ---- #}
+{% if messages %}
+<div id="django-messages" style="position:fixed;top:1.2rem;right:1.2rem;z-index:99999;min-width:280px;max-width:380px;">
+  {% for message in messages %}
+  <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %} alert-dismissible fade show shadow rounded-3 mb-2" role="alert" style="font-size:0.9rem;">
+    {% if message.tags == 'success' %}<i class="fas fa-check-circle me-2"></i>{% elif message.tags == 'error' %}<i class="fas fa-times-circle me-2"></i>{% else %}<i class="fas fa-info-circle me-2"></i>{% endif %}
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endfor %}
+</div>
+<script>
+  setTimeout(function() {
+    var el = document.getElementById('django-messages');
+    if (el) el.style.transition = 'opacity 0.5s', el.style.opacity = '0', setTimeout(function(){ el.remove(); }, 500);
+  }, 4000);
+
+</script>
+{% endif %}
 {% include 'includes/footer.html' %}

@@ -49,8 +49,8 @@
 
             <!-- Search -->
             <div class="col-xl-5 col-lg-4 col-md-12 col-12 order-3 order-lg-3 search-main mt-3 mt-lg-0">
-                <form class="d-flex w-100">
-                    <input type="text" class="form-control w-100" id="searchInput" placeholder="Search products, brands and categories…" aria-label="Search">
+                <form class="d-flex w-100" action="{% url 'search' %}">
+                    <input type="text" class="form-control w-100" id="searchInput" placeholder="Search products, brands and categories…" aria-label="Search" name="q">
                     <button class="btn-search btn flex-shrink-0" type="submit" aria-label="Search">
                         <i class="fas fa-search"></i>
                     </button>
@@ -61,15 +61,23 @@
             <div class="col-xl-4 col-lg-4 col-md-8 col-7 order-2 order-lg-3 d-flex justify-content-end align-items-center">
                 <div class="widget-header d-flex align-items-center" style="gap: 1.5rem;">
                     <div class="text-start">
+                        {% if not user.is_authenticated %}
                         <span class="text-muted d-block" style="font-size: 0.95rem; font-weight: 500; margin-bottom: 2px;">Welcome guest!</span>
                         <div style="font-size: 1.1rem; color: #495057;"> 
-                            <a href="#" style="text-decoration: none; color: #495057;">Sign in</a> <span style="color:#a9a9a9;">|</span>   
-                            <a href="#" style="text-decoration: none; color: #495057;">Register</a>
+                            <a href="{% url 'login_user' %}" style="text-decoration: none; color: #495057;">Sign in</a> <span style="color:#a9a9a9;">|</span>   
+                            <a href="{% url 'register_user' %}" style="text-decoration: none; color: #495057;">Register</a>
                         </div>
+                        {% else %}
+                        <div class="text-muted d-block" style="font-size: 0.95rem; font-weight: 500; margin-bottom: 2px;">Welcome <span style="color: #3167eb;">{{user.first_name}}</span>!</div>
+                        <div style="font-size: 1.1rem; color: #495057;"> 
+                            <a href="{% url 'logout_user' %}" style="text-decoration: none; color: #495057;">Logout</a> <span style="color:#a9a9a9;">|</span>   
+                            {% comment %} <a href="{% url 'dashboard' %}" style="text-decoration: none; color: #495057;">Dashboard</a> {% endcomment %}
+                        </div>
+                        {% endif %}
                     </div>
-                    <a href="#" class="position-relative" style="display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; border: 1px solid #e4e4e4; background: #fff; text-decoration: none; transition: all 0.2s ease;">
+                    <a href="{% url 'cart' %}" class="position-relative" style="display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; border: 1px solid #e4e4e4; background: #fff; text-decoration: none; transition: all 0.2s ease;">
                         <i class="fas fa-shopping-cart" style="font-size: 1.3rem; color: #8a8a8a;"></i>
-                        <span style="position: absolute; top: -5px; right: -5px; background: #fa3434; color: #fff; font-size: 0.8rem; font-weight: 700; padding: 2px 7px; border-radius: 50px; line-height: 1.2;">0</span>
+                        <span data-cart-badge style="position: absolute; top: -5px; right: -5px; background: #fa3434; color: #fff; font-size: 0.8rem; font-weight: 700; padding: 2px 7px; border-radius: 50px; line-height: 1.2;">{{cart_items|length}}</span>
                     </a>
                 </div>
             </div>
