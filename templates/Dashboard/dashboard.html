@@ -1,0 +1,567 @@
+{% extends 'base.html' %}
+
+{% block title %}My Dashboard – DjangoMart{% endblock %}
+
+{% block content %}
+
+<style>
+/* ============================================================
+   DASHBOARD  –  premium polish
+   ============================================================ */
+
+/* ---------- page wrapper ---------- */
+.dash-wrapper {
+    background: #f4f6fb;
+    padding: 36px 0 60px;
+    min-height: 80vh;
+}
+
+/* ---------- profile card ---------- */
+.profile-card {
+    background: linear-gradient(135deg, #3167eb 0%, #1a4bcc 100%);
+    border-radius: 14px;
+    padding: 28px 22px 22px;
+    color: #fff;
+    position: sticky;
+    top: 100px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(49,103,235,.30);
+    margin-bottom: 18px;
+}
+.profile-card::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 130px; height: 130px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.08);
+}
+.profile-card::after {
+    content: '';
+    position: absolute;
+    bottom: -20px; left: -20px;
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.05);
+}
+.profile-avatar {
+    width: 58px; height: 58px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.2);
+    border: 2px solid rgba(255,255,255,.5);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 14px;
+    position: relative; z-index: 1;
+}
+.profile-name {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 2px;
+    position: relative; z-index: 1;
+}
+.profile-email {
+    font-size: 0.78rem;
+    opacity: .75;
+    position: relative; z-index: 1;
+}
+.profile-badge {
+    display: inline-block;
+    background: rgba(255,255,255,.2);
+    border: 1px solid rgba(255,255,255,.35);
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 3px 12px;
+    margin-top: 10px;
+    letter-spacing: .5px;
+    position: relative; z-index: 1;
+}
+
+/* ---------- stat tiles ---------- */
+.stat-tile {
+    background: #fff;
+    border: 1px solid #e8ecf4;
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-align: center;
+    transition: box-shadow .2s, transform .2s;
+    margin-bottom: 8px;
+}
+.stat-tile:hover {
+    box-shadow: 0 6px 22px rgba(49,103,235,.12);
+    transform: translateY(-2px);
+}
+.stat-tile .stat-num {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #3167eb;
+    line-height: 1;
+}
+.stat-tile .stat-label {
+    font-size: 0.72rem;
+    color: #8a93a8;
+    font-weight: 600;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+}
+
+/* ---------- sidebar nav ---------- */
+.dash-nav {
+    background: #fff;
+    border: 1px solid #e8ecf4;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,.04);
+}
+.dash-nav .nav-item-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    font-size: 0.87rem;
+    color: #4a5568;
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    border-bottom: 1px solid #f4f6fb;
+    transition: all .18s;
+    font-weight: 500;
+}
+.dash-nav .nav-item-link:last-child { border-bottom: none; }
+.dash-nav .nav-item-link .nav-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: #f0f4ff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem;
+    color: #3167eb;
+    flex-shrink: 0;
+    transition: background .18s;
+}
+.dash-nav .nav-item-link:hover {
+    background: #f6f9ff;
+    color: #3167eb;
+    border-left-color: #3167eb;
+}
+.dash-nav .nav-item-link:hover .nav-icon {
+    background: #dce8ff;
+}
+.dash-nav .nav-item-link.active {
+    background: linear-gradient(90deg, #eef2ff 0%, #f6f9ff 100%);
+    color: #3167eb;
+    border-left-color: #3167eb;
+    font-weight: 700;
+}
+.dash-nav .nav-item-link.active .nav-icon {
+    background: #3167eb;
+    color: #fff;
+}
+
+.logout-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 9px 0;
+    background: #fff0f0;
+    border: 1px solid #fbd0d0;
+    border-radius: 10px;
+    color: #e53e3e;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all .18s;
+
+}
+.logout-btn:hover {
+    background: #e53e3e;
+    color: #fff;
+    border-color: #e53e3e;
+}
+
+/* ---------- section header ---------- */
+.section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1a2340;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e8ecf4;
+    margin-left: 4px;
+}
+
+/* ---------- order card ---------- */
+.order-card {
+    background: #fff;
+    border: 1px solid #e8ecf4;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(0,0,0,.05);
+    margin-bottom: 20px;
+    transition: box-shadow .22s;
+}
+.order-card:hover {
+    box-shadow: 0 8px 32px rgba(49,103,235,.12);
+}
+
+/* order header bar */
+.order-header {
+    background: linear-gradient(90deg, #f6f9ff 0%, #eef3ff 100%);
+    border-bottom: 1px solid #e4eaf8;
+    padding: 14px 22px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+.order-id {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #1a2340;
+}
+.order-id span { color: #3167eb; }
+.order-date {
+    font-size: 0.78rem;
+    color: #8a93a8;
+    margin-top: 2px;
+}
+.status-pill {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 20px;
+    letter-spacing: .3px;
+}
+.pill-delivered { background: #d4f5e7; color: #1a7a4a; }
+.pill-processing { background: #fff3cd; color: #856404; }
+.pill-cancelled { background: #fde8e8; color: #c53030; }
+.pill-shipped { background: #dbeafe; color: #1d4ed8; }
+
+/* delivery / payment meta */
+.order-meta {
+    padding: 18px 22px;
+    border-bottom: 1px solid #f0f3fa;
+}
+.meta-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: #aab0c0;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+.meta-value {
+    font-size: 0.85rem;
+    color: #2d3748;
+    line-height: 1.6;
+}
+.meta-value .highlight { color: #3167eb; font-weight: 600; }
+.total-line {
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #1a2340;
+    margin-top: 4px;
+}
+
+/* order items */
+.order-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 22px;
+    border-bottom: 1px solid #f4f6fb;
+    transition: background .15s;
+}
+.order-item:last-child { border-bottom: none; }
+.order-item:hover { background: #fafbff; }
+.item-thumb {
+    width: 68px; height: 68px;
+    border-radius: 10px;
+    background: #f4f6fb;
+    border: 1px solid #e8ecf4;
+    display: flex; align-items: center; justify-content: center;
+    color: #c8cedf;
+    font-size: 1.6rem;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+.item-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+}
+.item-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1a2340;
+    margin-bottom: 2px;
+}
+.item-price {
+    font-size: 0.82rem;
+    color: #3167eb;
+    font-weight: 700;
+}
+.item-seller {
+    font-size: 0.75rem;
+    color: #8a93a8;
+}
+.item-actions {
+    display: flex;
+    gap: 8px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+.btn-outline-brand {
+    border: 1.5px solid #3167eb;
+    color: #3167eb;
+    background: transparent;
+    border-radius: 6px;
+    padding: 5px 14px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .18s;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.btn-outline-brand:hover { background: #3167eb; color: #fff; }
+.btn-ghost {
+    border: 1.5px solid #dee2e6;
+    color: #6c757d;
+    background: transparent;
+    border-radius: 6px;
+    padding: 5px 14px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .18s;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.btn-ghost:hover { background: #f4f6fb; color: #1a2340; border-color: #c0c8d8; }
+
+/* ---------- empty state ---------- */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #8a93a8;
+}
+.empty-state i {
+    font-size: 3rem;
+    color: #c8cedf;
+    margin-bottom: 16px;
+    display: block;
+}
+.empty-state p { font-size: 0.9rem; margin-bottom: 18px; }
+</style>
+
+<div class="dash-wrapper">
+<div class="container">
+<div class="row g-4">
+
+    <!-- ===================== SIDEBAR ===================== -->
+    <div class="col-xl-3 col-lg-4">
+
+        <!-- Profile Card -->
+        <div class="profile-card">
+            <div class="profile-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="profile-name">
+                {% if request.user.is_authenticated %}
+                    {{ request.user.get_full_name|default:request.user.username }}
+                {% else %}
+                    Guest User
+                {% endif %}
+            </div>
+            <div class="profile-email">
+                {% if request.user.is_authenticated %}
+                    {{ request.user.email }}
+                {% endif %}
+            </div>
+            <div class="profile-badge">⭐ Premium Member</div>
+        </div>
+
+        <!-- Nav + Sign Out (sticky) -->
+        <div style="position: sticky; top: 20px;">
+
+            <!-- Nav Menu -->
+            <nav class="dash-nav">
+                <a href="#" class="nav-item-link active">
+                    <div class="nav-icon"><i class="fas fa-box-open"></i></div>
+                    My Order History
+                </a>
+                <a href="#" class="nav-item-link">
+                    <div class="nav-icon"><i class="fas fa-credit-card"></i></div>
+                    Transactions
+                </a>
+                <a href="#" class="nav-item-link">
+                    <div class="nav-icon"><i class="fas fa-undo-alt"></i></div>
+                    Returns &amp; Refunds
+                </a>
+                <a href="#" class="nav-item-link">
+                    <div class="nav-icon"><i class="fas fa-heart"></i></div>
+                    Wishlist
+                </a>
+                <a href="#" class="nav-item-link">
+                    <div class="nav-icon"><i class="fas fa-store"></i></div>
+                    My Selling Items
+                </a>
+                <a href="#" class="nav-item-link">
+                    <div class="nav-icon"><i class="fas fa-inbox"></i></div>
+                    Received Orders
+                </a>
+                <a href="#" class="nav-item-link">
+                    <div class="nav-icon"><i class="fas fa-cog"></i></div>
+                    Account Settings
+                </a>
+            </nav>
+
+            <a href="{% url 'logout_user' %}" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Sign Out
+            </a>
+
+        </div>
+
+    </div>
+    <!-- end sidebar -->
+
+    <!-- ===================== MAIN ===================== -->
+    <div class="col-xl-9 col-lg-8">
+
+        <div class="section-title">
+            <i class="fas fa-box-open" style="color:#3167eb;"></i>
+            Order History
+        </div>
+
+        <!-- ===== ORDER 1 ===== -->
+        <div class="order-card">
+
+            <!-- Header -->
+            <div class="order-header">
+                <div>
+                    <div class="order-id">Order ID: <span>#6123456789</span></div>
+                    <div class="order-date"><i class="fas fa-calendar-alt me-1"></i>16 December 2018</div>
+                </div>
+                <span class="status-pill pill-delivered">
+                    <i class="fas fa-check-circle me-1"></i> Delivered
+                </span>
+            </div>
+
+            <!-- Delivery & Payment -->
+            <div class="order-meta">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="meta-label"><i class="fas fa-map-marker-alt me-1"></i>Delivery to</div>
+                        <div class="meta-value">
+                            <div class="fw-semibold mb-1">Michael Jackson</div>
+                            <div><i class="fas fa-phone-alt me-1 text-muted" style="font-size:.75rem;"></i>+1 234 567 890</div>
+                            <div><i class="fas fa-envelope me-1 text-muted" style="font-size:.75rem;"></i>myname@pixsellz.com</div>
+                            <div class="text-muted" style="font-size:0.8rem;">Home no., Building, Street 123, Tashkent, UZB</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="meta-label"><i class="fas fa-receipt me-1"></i>Payment summary</div>
+                        <div class="meta-value">
+                            <div class="highlight mb-1"><i class="fab fa-cc-visa me-1"></i>Visa **** 4216</div>
+                            <div class="d-flex justify-content-between" style="font-size:0.82rem;">
+                                <span class="text-muted">Subtotal</span><span>$356.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between" style="font-size:0.82rem;">
+                                <span class="text-muted">Shipping</span><span>$56.00</span>
+                            </div>
+                            <div class="d-flex justify-content-between total-line border-top mt-2 pt-2">
+                                <span>Total</span><span>$412.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Items -->
+            <div class="order-item">
+                <div class="item-thumb"><i class="far fa-image"></i></div>
+                <div class="flex-grow-1 min-w-0">
+                    <div class="item-name">Air Max Sneakers – White / US 10</div>
+                    <div class="item-price">$145.00</div>
+                    <div class="item-seller"><i class="fas fa-store me-1"></i>Nike Clothing</div>
+                </div>
+                <div class="item-actions">
+                    <a href="#" class="btn-outline-brand"><i class="fas fa-map-marker-alt me-1"></i>Track</a>
+                    <a href="#" class="btn-ghost">Details</a>
+                </div>
+            </div>
+
+            <div class="order-item">
+                <div class="item-thumb"><i class="far fa-image"></i></div>
+                <div class="flex-grow-1 min-w-0">
+                    <div class="item-name">Classic Leather Belt – Brown M</div>
+                    <div class="item-price">$15.00</div>
+                    <div class="item-seller"><i class="fas fa-store me-1"></i>ABC Shop</div>
+                </div>
+                <div class="item-actions">
+                    <a href="#" class="btn-outline-brand"><i class="fas fa-map-marker-alt me-1"></i>Track</a>
+                    <a href="#" class="btn-ghost">Details</a>
+                </div>
+            </div>
+
+            <div class="order-item">
+                <div class="item-thumb"><i class="far fa-image"></i></div>
+                <div class="flex-grow-1 min-w-0">
+                    <div class="item-name">Premium Polo Shirt – Navy XL</div>
+                    <div class="item-price">$145.00</div>
+                    <div class="item-seller"><i class="fas fa-store me-1"></i>Walmart</div>
+                </div>
+                <div class="item-actions">
+                    <a href="#" class="btn-outline-brand"><i class="fas fa-map-marker-alt me-1"></i>Track</a>
+                    <a href="#" class="btn-ghost">Details</a>
+                </div>
+            </div>
+
+        </div>
+        <!-- end order-card -->
+
+        <!-- ===== ORDER 2 (Processing) ===== -->
+        <div class="order-card">
+            <div class="order-header">
+                <div>
+                    <div class="order-id">Order ID: <span>#8849302011</span></div>
+                    <div class="order-date"><i class="fas fa-calendar-alt me-1"></i>28 April 2026</div>
+                </div>
+                <span class="status-pill pill-processing">
+                    <i class="fas fa-spinner me-1"></i> Processing
+                </span>
+            </div>
+
+            <div class="order-item">
+                <div class="item-thumb"><i class="far fa-image"></i></div>
+                <div class="flex-grow-1 min-w-0">
+                    <div class="item-name">Wireless Noise-Cancelling Headphones</div>
+                    <div class="item-price">$249.00</div>
+                    <div class="item-seller"><i class="fas fa-store me-1"></i>TechZone</div>
+                </div>
+                <div class="item-actions">
+                    <a href="#" class="btn-outline-brand"><i class="fas fa-map-marker-alt me-1"></i>Track</a>
+                    <a href="#" class="btn-ghost">Details</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- end main -->
+
+</div>
+</div>
+</div>
+
+{% endblock %}

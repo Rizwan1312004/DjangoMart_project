@@ -71,6 +71,7 @@
                         <div class="text-muted d-block" style="font-size: 0.95rem; font-weight: 500; margin-bottom: 2px;">Welcome <span style="color: #3167eb;">{{user.first_name}}</span>!</div>
                         <div style="font-size: 1.1rem; color: #495057;"> 
                             <a href="{% url 'logout_user' %}" style="text-decoration: none; color: #495057;">Logout</a> <span style="color:#a9a9a9;">|</span>   
+                            <a href="{% url 'dashboard' %}" style="text-decoration: none; color: #495057;">Dashboard</a>
                             {% comment %} <a href="{% url 'dashboard' %}" style="text-decoration: none; color: #495057;">Dashboard</a> {% endcomment %}
                         </div>
                         {% endif %}

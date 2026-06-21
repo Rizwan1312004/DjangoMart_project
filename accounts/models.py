@@ -43,7 +43,7 @@ class Account(AbstractBaseUser):
 
     #required
     date_joined = models.DateField(auto_now_add=True)
-    last_login = models.DateField(auto_now_add=True)
+    last_login = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_superadmin = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
