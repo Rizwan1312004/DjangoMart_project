@@ -23,9 +23,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-^eovo4uvj$9#&-l3sw*q%r*jsk=kcd(-kg17_!_yl5((qma3e@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['djangomart.pythonanywhere.com']
+ALLOWED_HOSTS = ['djangomart.pythonanywhere.com',
+'127.0.0.1',
+'localhost',]
 
 
 # Application definition
